@@ -76,7 +76,7 @@ class BLEPeripheral: RCTEventEmitter, CBPeripheralManagerDelegate {
     @objc func start(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
         if (manager.state != .poweredOn) {
             alertJS("Bluetooth turned off")
-            return;
+            reject("ST_PWR_ERR", "power off", nil)
         }
         
         startPromiseResolve = resolve
@@ -99,7 +99,7 @@ class BLEPeripheral: RCTEventEmitter, CBPeripheralManagerDelegate {
     @objc func getWrite(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
         if (manager.state != .poweredOn) {
             alertJS("Bluetooth turned off")
-            return;
+            reject("WR_PWR_ERR", "power off", nil)
         }
         
         getWritePromiseResolve = resolve

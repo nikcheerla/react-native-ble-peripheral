@@ -5,10 +5,16 @@
 'use strict';
 
 var { NativeModules } = require('react-native');
-NativeModules.BLEPeripheral.onWrite = function(callback) {
-  NativeModules.BLEPeripheral.getWrite().then(write => {
-    callback(write);
-    NativeModules.BLEPeripheral.onWrite(callback);
-  })
+NativeModules.BLEPeripheral.onWrite = async function(callback) {
+  for (;;) {
+    try {
+      write = await NativeModules.BLEPeripheral.getWrite();
+      callback(write);
+    }
+    catch(err) {
+      // Broadcasting stopped
+      break;
+    }
+  }
 }
 module.exports = NativeModules.BLEPeripheral;
