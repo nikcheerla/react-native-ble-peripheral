@@ -74,14 +74,15 @@ class BLEPeripheral: RCTEventEmitter, CBPeripheralManagerDelegate {
     }
     
     @objc func start(_ resolve: @escaping RCTPromiseResolveBlock, rejecter reject: @escaping RCTPromiseRejectBlock) {
-        if (manager.state != .poweredOn) {
-            alertJS("Bluetooth turned off")
-            reject("ST_PWR_ERR", "power off", nil)
-        }
         
         startPromiseResolve = resolve
         startPromiseReject = reject
-
+        
+        if (manager.state != .poweredOn) {
+            alertJS("Bluetooth turned off")
+            startPromiseReject!("ST_PWR_ERR", "power off", nil);
+        }
+        
         let advertisementData = [
             CBAdvertisementDataLocalNameKey: name,
             CBAdvertisementDataServiceUUIDsKey: getServiceUUIDArray()

@@ -69,8 +69,11 @@ public class RNBLEModule extends ReactContextBaseJavaModule{
     BluetoothGattServer mGattServer;
     BluetoothLeAdvertiser advertiser;
     AdvertiseCallback advertisingCallback;
+    Promise writePromise;
     String name;
     boolean advertising;
+    byte[] value;
+
     private Context context;
 
     public RNBLEModule(ReactApplicationContext reactContext) {
@@ -103,7 +106,12 @@ public class RNBLEModule extends ReactContextBaseJavaModule{
     }
 
     @ReactMethod
-    public void addCharacteristicToService(String serviceUUID, String uuid, Integer permissions, Integer properties) {
+    public void addCharacteristicToService(String serviceUUID, String uuid, Integer permissions, Integer properties, ReadableArray message) {
+        this.value = new byte[message.size()];
+        for (int i = 0; i < message.size(); i++) {
+            this.value[i] = new Integer(message.getInt(i)).byteValue();
+        }
+
         UUID CHAR_UUID = UUID.fromString(uuid);
         BluetoothGattCharacteristic tempChar = new BluetoothGattCharacteristic(CHAR_UUID, properties, permissions);
         this.servicesMap.get(serviceUUID).addCharacteristic(tempChar);
@@ -127,6 +135,8 @@ public class RNBLEModule extends ReactContextBaseJavaModule{
         @Override
         public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset,
                                                 BluetoothGattCharacteristic characteristic) {
+            
+            Log.i("RNBLEModule", "got read req");
             super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
             if (offset != 0) {
                 mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_INVALID_OFFSET, offset,
@@ -134,7 +144,7 @@ public class RNBLEModule extends ReactContextBaseJavaModule{
                 return;
             }
             mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS,
-                    offset, characteristic.getValue());
+                    offset, RNBLEModule.this.value);
         }
 
         @Override
@@ -148,7 +158,9 @@ public class RNBLEModule extends ReactContextBaseJavaModule{
                                                  int offset, byte[] value) {
             super.onCharacteristicWriteRequest(device, requestId, characteristic, preparedWrite,
                     responseNeeded, offset, value);
-            characteristic.setValue(value);
+            // characteristic.setValue(value);
+
+            Log.i("RNBLEModule", "wreq");
             WritableMap map = Arguments.createMap();
             WritableArray data = Arguments.createArray();
             for (byte b : value) {
@@ -156,6 +168,15 @@ public class RNBLEModule extends ReactContextBaseJavaModule{
             }
             map.putArray("data", data);
             map.putString("device", device.toString());
+            Log.i("RNBLEModule", RNBLEModule.this.writePromise.toString());
+            // RNBLEModule.this.writePromise.resolve("done!");
+            // RNBLEModule.this.writePromise = null;
+            // // return;
+            if (RNBLEModule.this.writePromise != null) {
+                RNBLEModule.this.writePromise.resolve(map);
+                RNBLEModule.this.writePromise = null;
+            }
+
             if (responseNeeded) {
                 mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, value);
             }
@@ -189,13 +210,14 @@ public class RNBLEModule extends ReactContextBaseJavaModule{
             dataBuilder.addServiceUuid(new ParcelUuid(service.getUuid()));
         }
         AdvertiseData data = dataBuilder.build();
-        Log.i("RNBLEModule", data.toString());
+        // Log.i("RNBLEModule", data.toString());
 
         advertisingCallback = new AdvertiseCallback() {
             @Override
             public void onStartSuccess(AdvertiseSettings settingsInEffect) {
                 super.onStartSuccess(settingsInEffect);
                 advertising = true;
+                Log.e("RNBLEModule", "RESOLVING A PROMISEEE ");
                 promise.resolve("Success, Started Advertising");
 
             }
@@ -214,6 +236,10 @@ public class RNBLEModule extends ReactContextBaseJavaModule{
     }
     @ReactMethod
     public void stop(){
+        if (this.writePromise != null) {
+            this.writePromise.reject("never wrote anything");
+            this.writePromise = null;
+        }
         if (mGattServer != null) {
             mGattServer.close();
         }
@@ -223,6 +249,16 @@ public class RNBLEModule extends ReactContextBaseJavaModule{
             advertiser.stopAdvertising(advertisingCallback);
         }
     }
+
+    @ReactMethod
+    public void getWrite(final Promise promise){
+        // Ensures Bluetooth is available on the device and it is enabled. If not,
+// displays a dialog requesting user permission to enable Bluetooth.
+        this.writePromise = promise;
+        Log.i("RNBLEModule", "getwrote");
+        // this.writePromise.resolve("Done early, pls");
+    }
+
     @ReactMethod
     public void sendNotificationToDevices(String serviceUUID,String charUUID,ReadableArray message) {
         byte[] decoded = new byte[message.size()];
