@@ -81,6 +81,9 @@ class BLEPeripheral: RCTEventEmitter, CBPeripheralManagerDelegate {
         if (manager.state != .poweredOn) {
             alertJS("Bluetooth turned off")
             startPromiseReject!("ST_PWR_ERR", "power off", nil);
+            startPromiseResolve = nil;
+            startPromiseReject = nil;
+            return;
         }
         
         let advertisementData = [
@@ -209,6 +212,8 @@ class BLEPeripheral: RCTEventEmitter, CBPeripheralManagerDelegate {
         }
         advertising = true
         startPromiseResolve!(advertising)
+        startPromiseResolve = nil;
+        startPromiseReject = nil;
         print("advertising succeeded!")
     }
     
