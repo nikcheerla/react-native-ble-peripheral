@@ -136,11 +136,14 @@ public class RNBLEModule extends ReactContextBaseJavaModule{
         public void onCharacteristicReadRequest(BluetoothDevice device, int requestId, int offset,
                                                 BluetoothGattCharacteristic characteristic) {
             
-            Log.i("RNBLEModule", "got read req");
+            Log.i("RNBLEModule", "got read req: " + device.toString() + " " + requestId + " " + offset + " " + characteristic.toString());
             super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
             if (offset != 0) {
-                mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_INVALID_OFFSET, offset,
-                        /* value (optional) */ null);
+                byte[] values2 = new byte[RNBLEModule.this.value.length];
+                for (int i = offset; i < RNBLEModule.this.value.length; i++) {
+                    values2[i - offset] = RNBLEModule.this.value[i];
+                }
+                mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, values2);
                 return;
             }
             mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS,

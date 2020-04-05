@@ -10,6 +10,7 @@ class BLEPeripheral: RCTEventEmitter, CBPeripheralManagerDelegate {
     var name: String = "RN_BLE"
     var servicesMap = Dictionary<String, CBMutableService>()
     var manager: CBPeripheralManager!
+    var restoreStateIdentifier: String = "com.nikcheerla.tracetogether"
     var startPromiseResolve: RCTPromiseResolveBlock?
     var startPromiseReject: RCTPromiseRejectBlock?
     var getWritePromiseResolve: RCTPromiseResolveBlock?
@@ -17,7 +18,7 @@ class BLEPeripheral: RCTEventEmitter, CBPeripheralManagerDelegate {
     
     override init() {
         super.init()
-        manager = CBPeripheralManager(delegate: self, queue: nil, options: nil)
+        manager = CBPeripheralManager(delegate: self, queue: nil, options: [CBPeripheralManagerOptionRestoreIdentifierKey: restoreStateIdentifier])
         print("BLEPeripheral initialized, advertising: \(advertising)")
     }
     
@@ -264,6 +265,11 @@ class BLEPeripheral: RCTEventEmitter, CBPeripheralManagerDelegate {
         if(hasListeners) {
             sendEvent(withName: "onWarning", body: message)
         }
+    }
+    
+    public func peripheralManager(_ peripheral: CBPeripheralManager,
+                                  willRestoreState dict: [String : Any]) {
+        
     }
 
     @objc override func supportedEvents() -> [String]! { return ["onWarning"] }

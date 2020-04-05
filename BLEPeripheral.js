@@ -23,6 +23,7 @@ if (Platform.OS === 'android') {
     for (var i = 0; i < data.length; i++){  
         byteData.push(data.charCodeAt(i));
     }
+    console.log("Byte data: ", byteData);
     oldAddCharacteristic(ServiceUUID, UUID, permissions, properties, byteData)
   }
 }
