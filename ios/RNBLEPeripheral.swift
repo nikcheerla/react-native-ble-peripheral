@@ -15,6 +15,7 @@ class BLEPeripheral: RCTEventEmitter, CBPeripheralManagerDelegate {
     var startPromiseReject: RCTPromiseRejectBlock?
     var getWritePromiseResolve: RCTPromiseResolveBlock?
     var getWritePromiseReject: RCTPromiseRejectBlock?
+    var storedValue: Data?
     
     override init() {
         super.init()
@@ -157,9 +158,11 @@ class BLEPeripheral: RCTEventEmitter, CBPeripheralManagerDelegate {
     // Respond to Write request
     public func peripheralManager(_ peripheral: CBPeripheralManager, didReceiveWrite requests: [CBATTRequest])
     {
-        print("did receive write")
+//        print("did receive write \(requests.count)")
         for request in requests
         {
+//            print("req \(request)")
+//            print("req \(request.offset)")
             let characteristic = getCharacteristic(request.characteristic.uuid)
             if (characteristic == nil) { alertJS("characteristic for writing not found") }
             if request.characteristic.uuid.isEqual(characteristic?.uuid)
@@ -167,6 +170,7 @@ class BLEPeripheral: RCTEventEmitter, CBPeripheralManagerDelegate {
 //                let char = characteristic as! CBMutableCharacteristic
 //                char.value = request.value
                 let data = String(decoding: request.value!, as: UTF8.self)
+                
                 getWritePromiseResolve?(data);
                 getWritePromiseResolve = nil;
                 getWritePromiseReject = nil;
