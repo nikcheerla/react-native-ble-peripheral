@@ -140,9 +140,15 @@ class BLEPeripheral: RCTEventEmitter, CBPeripheralManagerDelegate {
         print("did receive read")
         let characteristic = getCharacteristic(request.characteristic.uuid)
         if (characteristic != nil){
-            request.value = characteristic?.value
+            if (request.offset > (characteristic?.value)!.count) {
+                request.value = nil;
+            }
+            else {
+                request.value = (characteristic?.value)![request.offset...]
+            }
             manager.respond(to: request, withResult: .success)
         } else {
+            print("did not read \(request)")
             alertJS("cannot read, characteristic not found")
         }
     }
