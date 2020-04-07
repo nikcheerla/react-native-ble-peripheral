@@ -137,7 +137,7 @@ public class RNBLEModule extends ReactContextBaseJavaModule {
             super.onCharacteristicReadRequest(device, requestId, offset, characteristic);
             if (offset != 0) {
                 byte[] values2 = new byte[RNBLEModule.this.value.length];
-                for (int i = offset; i < values.length; i++) {
+                for (int i = offset; i < RNBLEModule.this.value.length; i++) {
                     values2[i - offset] = RNBLEModule.this.value[i];
                 }
                 mGattServer.sendResponse(device, requestId, BluetoothGatt.GATT_SUCCESS, offset, values2);
