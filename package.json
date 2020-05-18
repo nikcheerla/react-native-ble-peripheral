@@ -1,0 +1,61 @@
+{
+  "_args": [
+    [
+      "git+https://github.com/nikcheerla/react-native-ble-peripheral.git",
+      "/Users/nikcheerla/Projects/ktrace"
+    ]
+  ],
+  "_from": "git+https://github.com/nikcheerla/react-native-ble-peripheral.git",
+  "_id": "react-native-ble-peripheral@git+https://github.com/nikcheerla/react-native-ble-peripheral.git#0ad22aee346445e0715fcf4c182b8240adcbc2c1",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/react-native-ble-peripheral",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "git",
+    "raw": "git+https://github.com/nikcheerla/react-native-ble-peripheral.git",
+    "rawSpec": "git+https://github.com/nikcheerla/react-native-ble-peripheral.git",
+    "saveSpec": "git+https://github.com/nikcheerla/react-native-ble-peripheral.git",
+    "fetchSpec": "https://github.com/nikcheerla/react-native-ble-peripheral.git",
+    "gitCommittish": null
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "git+https://github.com/nikcheerla/react-native-ble-peripheral.git#0ad22aee346445e0715fcf4c182b8240adcbc2c1",
+  "_shasum": "08e99cd7436b1099e13ea08a0cfd4bcf23adb63e",
+  "_spec": "git+https://github.com/nikcheerla/react-native-ble-peripheral.git",
+  "_where": "/Users/nikcheerla/Projects/ktrace",
+  "author": {
+    "name": "Omri Himelbrand"
+  },
+  "bugs": {
+    "url": "https://github.com/himelbrand/react-native-ble-peripheral/issues"
+  },
+  "deprecated": false,
+  "description": "a simulator for a BLE peripheral, to help with testing BLE apps without an actual peripheral BLE device",
+  "homepage": "https://github.com/himelbrand/react-native-ble-peripheral#readme",
+  "keywords": [
+    "react-native",
+    "ble",
+    "peripheral",
+    "react"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "react-native-ble-peripheral",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/himelbrand/react-native-ble-peripheral.git"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "types": "index.d.ts",
+  "version": "2.0.0",
+  "dependencies": {
+    "@types/d3-shape": "^1.3.2",
+    "@types/react-native-svg-charts": "^5.0.3",
+    "install": "^0.13.0"
+  }
+}
